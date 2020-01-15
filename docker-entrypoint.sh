@@ -29,7 +29,7 @@ fi
 
 echo "Placing new properties in shared/classes at catalina home"
 
-echo "mongo.db.uri=$SIMFLOFY_MONGODB_URI" > /usr/local/tomcat/shared/classes/mongo_db.properties
+echo "mongo.db.uri=$SIMFLOFY_MONGODB_URI" >> /usr/local/tomcat/shared/classes/mongo_db.properties
 
 if [ "$SIMFLOFY_MONGODB_USERNAME" ]; then
 	echo "mongo.db.username=$SIMFLOFY_MONGODB_USERNAME" >> /usr/local/tomcat/shared/classes/mongo_db.properties
