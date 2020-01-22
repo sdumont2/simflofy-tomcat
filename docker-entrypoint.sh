@@ -27,7 +27,7 @@ if [ "$SIMFLOFY_ADMIN_DOWNLOAD_URL" ]; then
 	echo 
 fi
 
-echo "Placing new properties in shared/classes at catalina home"
+echo "Placing new Simflofy properties in shared/classes at catalina home"
 
 echo "mongo.db.uri=$SIMFLOFY_MONGODB_URI" >> /usr/local/tomcat/shared/classes/mongo_db.properties
 
@@ -43,6 +43,14 @@ if [ "$SIMFLOFY_MONGODB_NAME" ]; then
 	echo "mongo.db.dbname=$SIMFLOFY_MONGODB_NAME" >> /usr/local/tomcat/shared/classes/simflofy-global.properties
 else
 	echo "mongo.db.dbname=simflofy" >> /usr/local/tomcat/shared/classes/simflofy-global.properties
+fi
+
+echo "Placing new TSearch properties in shared/classes at catalina home"
+
+if [ "$TSEARCH_SIMFLOFY_SERVICES_URL" ]; then
+	echo "tsearch.simflofy.services.url=$TSEARCH_SIMFLOFY_SERVICES_URL" >> /usr/local/tomcat/shared/classes/tsearch.properties
+else
+	echo "tsearch.simflofy.services.url=http://localhost:8080/simflofy-admin" >> /usr/local/tomcat/shared/classes/tsearch.properties
 fi
 
 exec "$@"

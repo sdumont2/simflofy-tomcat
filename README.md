@@ -11,3 +11,4 @@ Other Environment Variables to consider.
 **SIMFLOFY_MONGODB_USERNAME** - This variable is the **username** of the user to authenticate to MongoDB with. Defaults to **simflofy**.   
 **SIMFLOFY_MONGODB_PASSWORD** - This variable is the **password** of the user to authenticate to MongoDB with. Defaults to **simflofy**.   
 **SIMFLOFY_MONGODB_NAME** - This variable is the **Database name** of the MongoDB instance to connect with. Defaults to **simflofy**.  
+**TSEARCH_SIMFLOFY_SERVICES_URL** - This variable is the **Simflofy Admin Service URL** to connect TSearch to. Defaults to **http://localhost:8080/simflofy-admin**.
