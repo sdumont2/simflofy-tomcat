@@ -4,8 +4,7 @@ ARG TOMCAT_DIR=/usr/local/tomcat
 
 RUN mkdir -p ${TOMCAT_DIR}/shared/classes && \
 touch ${TOMCAT_DIR}/shared/classes/simflofy-global.properties && \
-touch ${TOMCAT_DIR}/shared/classes/mongo_db.properties && \
-touch ${TOMCAT_DIR}/shared/classes/tsearch.properties
+touch ${TOMCAT_DIR}/shared/classes/mongo_db.properties
 
 RUN sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" ${TOMCAT_DIR}/conf/catalina.properties
 

@@ -1,6 +1,9 @@
 #! /bin/bash
 set -e
 
+WEBAPP_DIR="/usr/local/tomcat/webapps"
+SHARED_DIR="/usr/local/tomcat/shared/classes"
+
 #Check for mongodb uri
 if [ -z "$SIMFLOFY_MONGODB_URI" ]; then 
 	echo "SIMFLOFY_MONGODB_URI not provided"
@@ -11,7 +14,7 @@ if [ "$SIMFLOFY_TSEARCH_DOWNLOAD_URL" ]; then
 	echo 
 	echo "Starting TSearch Download"
 	echo 
-	wget -q -O /usr/local/tomcat/webapps/tsearch.war "${SIMFLOFY_TSEARCH_DOWNLOAD_URL}"
+	wget -q -O $WEBAPP_DIR/tsearch.war "${SIMFLOFY_TSEARCH_DOWNLOAD_URL}"
 	echo 
 	echo "TSearch Download Complete"
 	echo 
@@ -21,44 +24,63 @@ if [ "$SIMFLOFY_ADMIN_DOWNLOAD_URL" ]; then
 	echo 
 	echo "Starting Simflofy Admin Download"
 	echo 
-	wget -q -O /usr/local/tomcat/webapps/simflofy-admin.war "${SIMFLOFY_ADMIN_DOWNLOAD_URL}"
+	wget -q -O $WEBAPP_DIR/simflofy-admin.war "${SIMFLOFY_ADMIN_DOWNLOAD_URL}"
 	echo 
 	echo "Simflofy Admin Download Complete"
 	echo 
 fi
 
-echo " "
-echo "Placing new Simflofy properties in shared/classes at catalina home"
-echo " "
 
-echo "mongo.db.uri=$SIMFLOFY_MONGODB_URI" > /usr/local/tomcat/shared/classes/mongo_db.properties
+if [ -f "$WEBAPP_DIR/simflofy-admin.war" ]; then
 
-if [ "$SIMFLOFY_MONGODB_USERNAME" ]; then
-	echo "mongo.db.username=$SIMFLOFY_MONGODB_USERNAME" >> /usr/local/tomcat/shared/classes/mongo_db.properties
+	echo " "
+	echo "Placing new Simflofy properties in shared/classes at catalina home"
+	echo " "
+
+	echo "mongo.db.uri=$SIMFLOFY_MONGODB_URI" > $SHARED_DIR/mongo_db.properties
+
+	if [ "$SIMFLOFY_MONGODB_USERNAME" ]; then
+		echo "mongo.db.username=$SIMFLOFY_MONGODB_USERNAME" >> $SHARED_DIR/mongo_db.properties
+	fi
+
+	if [ "$SIMFLOFY_MONGODB_PASSWORD" ]; then
+		echo "mongo.db.password=$SIMFLOFY_MONGODB_PASSWORD" >> $SHARED_DIR/mongo_db.properties
+	fi
+
+	if [ "$SIMFLOFY_MONGODB_NAME" ]; then
+		echo "mongo.db.dbname=$SIMFLOFY_MONGODB_NAME" > $SHARED_DIR/simflofy-global.properties
+	else
+		echo "mongo.db.dbname=simflofy" > $SHARED_DIR/simflofy-global.properties
+	fi
+
+	echo " "
+	echo "Completed placing properties in shared/classes at catalina home"
+	echo " "
+
 fi
 
-if [ "$SIMFLOFY_MONGODB_PASSWORD" ]; then
-	echo "mongo.db.password=$SIMFLOFY_MONGODB_PASSWORD" >> /usr/local/tomcat/shared/classes/mongo_db.properties
+if [ -f "$WEBAPP_DIR/tsearch.war" ]; then
+
+	echo " "
+	echo "Placing new TSearch properties in tsearch war at catalina webapps"
+	echo " "
+
+	jar -x --file $WEBAPP_DIR/tsearch.war $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
+
+	if [ "$TSEARCH_SIMFLOFY_SERVICES_URL" ]; then
+		sed -i '/tsearch\.simflofy\.services\.url/s/.*/tsearch\.simflofy\.services\.url\=$TSEARCH_SIMFLOFY_SERVICES_URL/' $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
+	else
+		sed -i '/tsearch\.simflofy\.services\.url/s/.*/tsearch\.simflofy\.services\.url\=http\:\/\/localhost\:8080\/simflofy\-admin/' $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
+	fi
+
+	zip -r $WEBAPP_DIR/tsearch.war $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
+
+	rm -rf $WEBAPP_DIR/WEB-INF
+
+	echo " "
+	echo "Completed placing properties in tsearch war at catalina webapps"
+	echo " "
+
 fi
-
-if [ "$SIMFLOFY_MONGODB_NAME" ]; then
-	echo "mongo.db.dbname=$SIMFLOFY_MONGODB_NAME" > /usr/local/tomcat/shared/classes/simflofy-global.properties
-else
-	echo "mongo.db.dbname=simflofy" > /usr/local/tomcat/shared/classes/simflofy-global.properties
-fi
-
-echo " "
-echo "Placing new TSearch properties in shared/classes at catalina home"
-echo " "
-
-if [ "$TSEARCH_SIMFLOFY_SERVICES_URL" ]; then
-	echo "tsearch.simflofy.services.url=$TSEARCH_SIMFLOFY_SERVICES_URL" > /usr/local/tomcat/shared/classes/tsearch.properties
-else
-	echo "tsearch.simflofy.services.url=http://localhost:8080/simflofy-admin" > /usr/local/tomcat/shared/classes/tsearch.properties
-fi
-
-echo " "
-echo "Completed placing properties in shared/classes at catalina home"
-echo " "
 
 exec "$@"
