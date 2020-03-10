@@ -14,7 +14,7 @@ if [ "$SIMFLOFY_TSEARCH_DOWNLOAD_URL" ]; then
 	echo 
 	echo "Starting TSearch Download"
 	echo 
-	wget -q -O $WEBAPP_DIR/tsearch.war "${SIMFLOFY_TSEARCH_DOWNLOAD_URL}"
+	wget -q --no-check-certificate -O $WEBAPP_DIR/tsearch.war "${SIMFLOFY_TSEARCH_DOWNLOAD_URL}"
 	echo 
 	echo "TSearch Download Complete"
 	echo 
@@ -24,7 +24,7 @@ if [ "$SIMFLOFY_ADMIN_DOWNLOAD_URL" ]; then
 	echo 
 	echo "Starting Simflofy Admin Download"
 	echo 
-	wget -q -O $WEBAPP_DIR/simflofy-admin.war "${SIMFLOFY_ADMIN_DOWNLOAD_URL}"
+	wget -q --no-check-certificate -O $WEBAPP_DIR/simflofy-admin.war "${SIMFLOFY_ADMIN_DOWNLOAD_URL}"
 	echo 
 	echo "Simflofy Admin Download Complete"
 	echo 
