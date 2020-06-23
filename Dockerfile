@@ -10,7 +10,7 @@ RUN sed -i "s/shared.loader=/shared.loader=\${catalina.base}\/shared\/classes/" 
 
 RUN sed -i -e "\$a\grant\ codeBase\ \"file:\$\{catalina.base\}\/webapps\/simflofy-admin\/-\" \{\n\    permission\ java.security.AllPermission\;\n\};\ngrant\ codeBase\ \"file:\$\{catalina.base\}\/webapps\/tsearch\/-\" \{\n\    permission\ java.security.AllPermission\;\n\};\ngrant\ codeBase\ \"file:\$\{catalina.base\}\/webapps\/ROOT\/-\" \{\n\    permission org.apache.catalina.security.DeployXmlPermission \"ROOT\";\n\};" ${TOMCAT_DIR}/conf/catalina.policy
 
-RUN apt-get update && apt-get install -y --no-install-recommends wget
+RUN apt-get update && apt-get install -y --no-install-recommends wget zip
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod 777 /usr/local/bin/docker-entrypoint.sh
@@ -20,6 +20,3 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 EXPOSE 8080
 EXPOSE 8443
 CMD ["catalina.sh", "run", "-security"]
-
-
-

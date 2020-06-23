@@ -37,6 +37,8 @@ if [ -f "$WEBAPP_DIR/simflofy-admin.war" ]; then
 	echo "Placing new Simflofy properties in shared/classes at catalina home"
 	echo " "
 
+	chmod 755 $WEBAPP_DIR/simflofy-admin.war
+
 	echo "mongo.db.uri=$SIMFLOFY_MONGODB_URI" > $SHARED_DIR/mongo_db.properties
 
 	if [ "$SIMFLOFY_MONGODB_USERNAME" ]; then
@@ -65,7 +67,11 @@ if [ -f "$WEBAPP_DIR/tsearch.war" ]; then
 	echo "Placing new TSearch properties in tsearch war at catalina webapps"
 	echo " "
 
-	jar -x --file $WEBAPP_DIR/tsearch.war $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
+	chmod 755 $WEBAPP_DIR/tsearch.war
+
+	cd $WEBAPP_DIR
+	jar -x --file tsearch.war WEB-INF/classes/tsearch.properties
+	cd ..
 
 	if [ "$TSEARCH_SIMFLOFY_SERVICES_URL" ]; then
 		sed -i '/tsearch\.simflofy\.services\.url/s/.*/tsearch\.simflofy\.services\.url\=$TSEARCH_SIMFLOFY_SERVICES_URL/' $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
@@ -73,9 +79,11 @@ if [ -f "$WEBAPP_DIR/tsearch.war" ]; then
 		sed -i '/tsearch\.simflofy\.services\.url/s/.*/tsearch\.simflofy\.services\.url\=http\:\/\/localhost\:8080\/simflofy\-admin/' $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
 	fi
 
-	zip -r $WEBAPP_DIR/tsearch.war $WEBAPP_DIR/WEB-INF/classes/tsearch.properties
+	cd $WEBAPP_DIR
+	zip -r tsearch.war WEB-INF/classes/tsearch.properties
 
-	rm -rf $WEBAPP_DIR/WEB-INF
+	rm -rf WEB-INF
+	cd ..
 
 	echo " "
 	echo "Completed placing properties in tsearch war at catalina webapps"
